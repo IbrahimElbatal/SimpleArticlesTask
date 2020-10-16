@@ -1,0 +1,72 @@
+
+<table class="table table-light table-hover table-striped table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>Text</th>
+            <th>IsApproved</th>
+            <th>Reason</th>
+            <th>PostId</th>
+            <th>operations</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngIf="comments && comments.length == 0;else show">
+            <td colspan="5">No Data</td>
+        </tr>
+        <ng-template #show>
+            <tr *ngFor="let comment of comments">
+                <td>{{ comment.text }}</td>
+                <td>{{ comment.isApproved }}</td>
+                <td>{{ comment.reason }}</td>
+                <td>{{ comment.postId}}</td>
+                <td>
+                    <button class="btn btn-primary" (click)="onEditModal(comment.id,editComment)">Edit</button>
+                </td>
+            </tr>
+        </ng-template>
+    </tbody>
+</table>
+
+
+
+  <!--Edit comment Modal-->
+  <ng-template #editComment>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">Editting a Comment</h4>
+      <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+        <div *ngIf="editCommentForm">
+            <form [formGroup]="editCommentForm" (ngSubmit)="onEdit()">
+                <div class="form-group">
+                    <label>IsApproved</label>
+                    <input type="text"
+                         name="isApproved" 
+                         formControlName="isApproved"
+                         class="form-control"
+                         placeholder="IsApproved......">
+                    <div *ngIf="isApproved.touched && isApproved.hasError('required')">
+                        <span class="text-danger" *ngIf="isApproved.hasError('required')">title is Required</span>
+                    </div>   
+                </div>
+
+                <div class="form-group">
+                    <label>Reason</label>
+                    <input type="text"
+                         name="reason" 
+                         formControlName="reason"
+                         class="form-control"
+                         placeholder="Reason......">
+                    <div *ngIf="reason.touched && reason.hasError('required')">
+                        <span class="text-danger" *ngIf="reason.hasError('required')">Reason is Required</span>
+                    </div>   
+                </div>
+                
+                <button [disabled]="!editCommentForm.valid" type="submit" class="btn btn-primary">Edit</button>
+            </form>
+        
+        </div>    
+    </div>
+  </ng-template>

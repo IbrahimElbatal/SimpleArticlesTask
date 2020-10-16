@@ -1,0 +1,162 @@
+
+<ng-container *ngIf="userRole$ | async as role">
+    <button *ngIf="role && role.toLowerCase() === 'admin'" class="btn btn-primary my-2" type="button" (click)="openModal(createPost)">New Post</button>
+</ng-container>
+<input type="text" 
+    class="form-control mb-2" 
+    placeholder="Filter By Category..." 
+    name="category" 
+    [(ngModel)] = "categoryFilter"
+    (input)="filterWithCategory()">
+<table class="table table-light table-hover table-striped table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>Category</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Created Date</th>
+            <th>operations</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngIf="filteredPosts && filteredPosts.length == 0;else show">
+            <td colspan="5">No Data</td>
+        </tr>
+        <ng-template #show>
+            <tr *ngFor="let post of filteredPosts">
+                <td>{{post.category}}</td>
+                <td>{{post.title}}</td>
+                <td>{{post.description}}</td>
+                <td>{{post.createdDate | date}}</td>
+                <td>
+                    <button class="btn btn-primary" (click)="onEditModal(post.id,editPost)">Edit</button>
+                </td>
+            </tr>
+        </ng-template>
+    </tbody>
+</table>
+
+
+
+<!--Create Post Modal-->
+<ng-template #createPost>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">Adding a New Post</h4>
+      <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="createPostForm" (ngSubmit)="onCreate()">
+            <div class="form-group">
+                <select name="category"
+                    formControlName="category"
+                    class="form-control">
+                    <option value="">Select Category</option>
+                    <option value="CSharp">CSharp</option>
+                    <option value="Jave">Java</option>
+                    <option value="Javascript">Javascript</option>
+                    <option value="Mvc">Mvc</option>
+                    <option value="Angular">Angular</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text"
+                     name="title" 
+                     formControlName="title"
+                     class="form-control"
+                     placeholder="Title......">
+                <div *ngIf="title.touched && title.hasError('required')">
+                    <span class="text-danger" *ngIf="title.hasError('required')">title is Required</span>
+                </div>   
+            </div>
+            <div class="form-group">
+                <textarea class="form-control" 
+                    name="description" 
+                    cols="10" 
+                    rows="3"
+                    formControlName="description"
+                    placeholder="Description ......"></textarea>
+                    <div *ngIf="description.touched && description.hasError('required')">
+                        <span class="text-danger" *ngIf="description.hasError('required')">Description is Required</span>
+                    </div>   
+            </div>
+    
+            <div class="form-group">
+                <input type="file"
+                     name="file" 
+                     (change)="onChange($event)"
+                     formControlName="file"
+                     class="form-control">
+                <div *ngIf="file.touched && file.hasError('required')">
+                    <span class="text-danger" *ngIf="file.hasError('required')">file is Required</span>
+                </div>   
+            </div>
+            <button [disabled]="!createPostForm.valid" type="submit" class="btn btn-primary">Create</button>
+        </form>
+    </div>
+  </ng-template>
+
+
+
+  <!--Edit Post Modal-->
+<ng-template #editPost>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">Editting a Post</h4>
+      <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+        <div *ngIf="editPostForm">
+            <form [formGroup]="editPostForm" (ngSubmit)="onEdit()">
+                <div class="form-group">
+                    <select name="category"
+                        formControlName="category"
+                        class="form-control">
+                        <option value="CSharp">CSharp</option>
+                        <option value="Jave">Java</option>
+                        <option value="Javascript">Javascript</option>
+                        <option value="Mvc">Mvc</option>
+                        <option value="Angular">Angular</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input type="text"
+                         name="title" 
+                         formControlName="title"
+                         class="form-control"
+                         placeholder="Title......">
+                    <div *ngIf="title.touched && title.hasError('required')">
+                        <span class="text-danger" *ngIf="title.hasError('required')">title is Required</span>
+                    </div>   
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control" 
+                        name="description" 
+                        cols="10" 
+                        rows="3"
+                        formControlName="description"
+                        placeholder="Description ......"></textarea>
+                        <div *ngIf="description.touched && description.hasError('required')">
+                            <span class="text-danger" *ngIf="description.hasError('required')">Description is Required</span>
+                        </div>   
+                </div>
+        
+                <div class="form-group">
+                    <input type="file"
+                         name="file" 
+                         (change)="onChange($event)"
+                         formControlName="file"
+                         class="form-control">
+                </div>
+                <button [disabled]="!editPostForm.valid" type="submit" class="btn btn-primary">Edit</button>
+            </form>
+        
+        </div>    
+    </div>
+  </ng-template>
+
+
+
+
