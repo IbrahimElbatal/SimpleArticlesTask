@@ -81,11 +81,19 @@ export class PostsComponent implements OnInit,OnDestroy {
     
 
         this.postService.CreatePost(formData)
-          .subscribe(res=>{
+          .subscribe(_=>{
               this.modalService.hide();
               this.createPostForm.reset();
-              // this.posts$ = this.postService.GetPosts();   
               this.getPosts()                     
+          },error=>{
+            if(error.status == 401)
+              alert("UnAuthorized Please login");
+            else if(error.status == 403)
+              alert("you don't have access to this.");
+            else
+              alert('UnKnown Error Occur Check your Api Service.');
+  
+            console.log(error);
           });
       }
 
@@ -108,10 +116,19 @@ export class PostsComponent implements OnInit,OnDestroy {
         formData.append("File",this.fileToUpload);
 
         this.postService.EditPost(this.postId,formData)
-          .subscribe(res=>{
+          .subscribe(_=>{
             this.modalService.hide();
             this.editPostForm.reset();
             this.getPosts();                        
+          },error =>{
+            if(error.status == 401)
+              alert("UnAuthorized Please login");
+            else if(error.status == 403)
+              alert("you don't have access to this.");
+            else
+              alert('UnKnown Error Occur Check your Api Service.');
+  
+            console.log(error);
           });
       }
 
@@ -125,7 +142,17 @@ export class PostsComponent implements OnInit,OnDestroy {
       
       private getPosts(){
         this.subscribtion = this.postService.GetPosts()
-          .subscribe(posts=> this.posts=this.filteredPosts = posts);
+          .subscribe(posts=> this.posts=this.filteredPosts = posts,
+            error=>{
+              if(error.status == 401)
+               alert("UnAuthorized Please login");
+              else if(error.status == 403)
+                alert("you don't have access to this.");
+              else
+                alert('UnKnown Error Occur Check your Api Service.');
+    
+               console.log(error);
+            });
 
 
       }

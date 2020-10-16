@@ -58,10 +58,19 @@ export class CommentsComponent implements OnInit {
   onEdit(){
     
     this.commentService.EditComment(this.commentId,this.editCommentForm.value)
-      .subscribe(res=>{
+      .subscribe(_=>{
         this.modalService.hide();
         this.editCommentForm.reset();
         this.getComments();                        
+      },error=>{
+        if(error.status == 401)
+          alert("UnAuthorized Please login");
+        else if(error.status == 403)
+          alert("you don't have access to this.");
+        else
+        alert('UnKnown Error Occur Check your Api Service.');
+
+        console.log(error);
       });
   }
 
@@ -78,7 +87,17 @@ export class CommentsComponent implements OnInit {
 
   private getComments(){
     this.commentService.GetComments()
-      .subscribe(comments => this.comments = comments);
+      .subscribe(comments => this.comments = comments,
+        error=>{
+          if(error.status == 401)
+            alert("UnAuthorized Please login");
+          else if(error.status == 403)
+            alert("you don't have access to this.");
+          else
+            alert('UnKnown Error Occur Check your Api Service.');
+
+          console.log(error);
+        });
   }
   ngOnDestroy(): void {
     if(this.subscribtion){

@@ -53,7 +53,18 @@ export class HomeComponent implements OnInit {
 
     ngOnInit(): void {
       this.subscribtion = this.postService.GetPosts()
-            .subscribe(posts=> this.posts = this.filteredPosts = posts);
+            .subscribe(
+              posts=> this.posts = this.filteredPosts = posts,
+              error => {
+                if(error.status == 401)
+                  alert("UnAuthorized Please login");
+                if(error.status == 403)
+                  alert("you don't have access to this.");
+                else
+                  alert('UnKnown Error Occur Check your Api Service.');
+
+                console.log(error);
+              });
       
     }
 
@@ -86,9 +97,19 @@ export class HomeComponent implements OnInit {
       comment.text = this.text.value;
 
       this.commentService.CreateComment(comment)
-      .subscribe(res=>{
+      .subscribe(_ =>{
         this.modalService.hide();
         this.createCommentForm.reset();
+      },
+      error => {
+        if(error.status == 401)
+          alert("UnAuthorized Please login");
+        else if(error.status == 403)
+          alert("you don't have access to this.");
+        else
+          alert('UnKnown Error Occur Check your Api Service.');
+
+        console.log(error);
       });
     }
 
@@ -99,6 +120,16 @@ export class HomeComponent implements OnInit {
         ))
         .subscribe(comments => {
           this.commentsByPost = comments;
+        },
+        error=>{
+          if(error.status == 401)
+           alert("UnAuthorized Please login");
+          else if(error.status == 403)
+            alert("you don't have access to this.");
+          else
+            alert('UnKnown Error Occur Check your Api Service.');
+
+          console.log(error);
         });
       this.modalRef = this.modalService.show(showComments);
     }
